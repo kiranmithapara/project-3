@@ -115,3 +115,21 @@ body {
   padding-left: 0;
   padding-right: 0;
 }
+
+.review-card {
+  border-radius: 12px;
+  transition: transform 0.2s ease;
+}
+
+.review-card:hover {
+  transform: scale(1.02);
+}
+
+.star {
+  color: gold;
+  font-size: 18px;
+}
+
+.card-subtitle {
+  font-size: 14px;
+}
