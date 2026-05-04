@@ -1,9 +1,12 @@
 const express = require("express");
-const router = express.Router();
+const router = express.Router(); //Ye ek Router object create karta hai
+// Router = chhota Express app (sirf routes handle karne ke liye  )
 const Listing = require("../models/listing");
 const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
 const { listingSchema } = require("../schema");
+const { isLoggedIn } = require("../middleware/isLoggedIn.middleware.js");
+const isOwner = require("../middleware/isOwner.middleware.js");
 
 const validateListing = (req, res, next) => {
   //error che te ek object che tethi req.body mathi je error avse tema ditails che te object che theti error ma badhi detais save thase
@@ -28,7 +31,7 @@ router.get(
 );
 
 //New Route - cerate a new listings - show aa form
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
   res.render("listing/new.ejs");
 });
 
@@ -64,6 +67,7 @@ router.post(
       throw new ExpressError(400, "send valid data for listings");
     }
     let newListing = new Listing(req.body);
+    newListing.owner = req.user._id;
     // if (!newListing.title) {
     //   throw new ExpressError(400, "Title is missing");
     // }
@@ -89,6 +93,9 @@ router.post(
 //Edit Route = edit form show
 router.get(
   "/:id/edit",
+  isOwner,
+
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     const listing = await Listing.findById(id);
@@ -105,7 +112,9 @@ router.get(
   "/:id",
   wrapAsync(async (req, res) => {
     let { id } = req.params;
-    const listing = await Listing.findById(id).populate("reviews");
+    const listing = await Listing.findById(id)
+      .populate("reviews")
+      .populate("owner");
 
     if (!listing) {
       return res.send("Listing not found");
@@ -131,6 +140,9 @@ router.put(
 //Delete Route
 router.delete(
   "/:id",
+  isOwner,
+  isLoggedIn,
+
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     const deletedListing = await Listing.findByIdAndDelete(id);

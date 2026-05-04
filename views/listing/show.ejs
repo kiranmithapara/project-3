@@ -12,26 +12,30 @@
 
       <div class="card-body">
         <p class="card-text">
-          <%= listing.description %><br /><br />
+        <p> <i><b>Owner : <%= listing.owner.username %></b></i></p>
+        <%= listing.description %><br /><br />
 
-            &#8377;<%= listing.price ? listing.price.toLocaleString("en-IN") : "N/A" %><br />
+          &#8377;<%= listing.price ? listing.price.toLocaleString("en-IN") : "N/A" %><br />
 
-              <%= listing.location %><br />
+            <%= listing.location %><br />
 
-                <%= listing.country %>
-        </p>
+              <%= listing.country %>
+                </p>
       </div>
     </div>
 
     <div class="col-6 offset-3 mt-3 mb-3">
-      <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark edit-btn">
-        Edit
-      </a>
 
-      <form method="post" action="/listings/<%= listing._id %>?_method=DELETE" class="d-inline">
-        <button class="btn btn-danger">Delete</button>
-      </form>
-      <hr />
+      
+        <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark edit-btn">
+          Edit
+        </a>
+
+        <form method="post" action="/listings/<%= listing._id %>?_method=DELETE" class="d-inline">
+          <button class="btn btn-danger">Delete</button>
+        </form>
+        <hr />
+
     </div>
     <!-- REVIEW FORM -->
     <div class="col-6 mt-3 offset-3 mb-3 needs-validation" novalidate>
@@ -88,6 +92,7 @@
                 </div>
               </div>
               <% } %>
+
       </div>
     </div>
   </div>

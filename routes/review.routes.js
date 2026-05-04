@@ -1,9 +1,11 @@
 const express = require("express");
+const router = express.Router({ mergeParams: true }); //Parent route ke params ko child router me merge (combine) karta hai
 const Listing = require("../models/listing");
 const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
 const Review = require("../models/review");
-const router = express.Router({ mergeParams: true });
+const { isLoggedIn } = require("../middleware/isLoggedIn.middleware.js");
+
 const { reviewSchema } = require("../schema");
 
 const validateReview = (req, res, next) => {
@@ -18,12 +20,14 @@ const validateReview = (req, res, next) => {
 
 router.post(
   "/",
+  isLoggedIn,
   validateReview,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
 
     let listing = await Listing.findById(id);
     let review = new Review(req.body);
+
     listing.reviews.push(review._id);
 
     await review.save();
@@ -35,6 +39,7 @@ router.post(
 //Delete review
 router.delete(
   "/:reviewId",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     let { id, reviewId } = req.params;
 
